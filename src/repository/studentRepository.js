@@ -24,6 +24,7 @@ export const findStudentsByName = async name => await collection.find({name: {$r
 
 export const countStudentsByNames = async names => {
     // TODO HW1 implements ignore case functionality
+    const regexNames = names.map(name => new RegExp(`^${name}$`, 'i'));
     return await collection.countDocuments({name: {$in: regexNames}});
 }
 

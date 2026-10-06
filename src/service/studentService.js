@@ -2,54 +2,27 @@ import * as repo from "../repository/studentRepository.js";
 
 export const addStudent = async student => repo.createStudent(student);
 
-export const findStudent = async id => {
-    const student = await repo.findStudentById(+id);
-    return renameId(student);
-}
+export const findStudent = async id => renameId(await repo.findStudentById(+id));
 
-export const deleteStudent = async id => {
-    const student = await repo.deleteStudent(+id);
-    return renameId(student);
-}
+export const deleteStudent = async (id) => renameId(await repo.deleteStudent(+id));
 
-export const updateStudent = async (id, data) => {
-    const student = await repo.updateStudent(+id, data);
-    return renameId(student);
-}
+export const updateStudent = async (id, data) => renameId(await repo.updateStudent(+id, data));
 
-export const addScore = async (id, exam, score) => {
-    const student = await repo.updateStudent(
-        +id,
-        {[`scores.${exam}`]: score}
-    );
+export const addScore = async (id, exam, score) => await repo.updateStudent(+id, {[`scores.${exam}`]: score});
 
-    return renameId(student);
-}
-
-export const findStudentsByName = async name => {
-    const students = await repo.findStudentsByName(name);
-    return students.map(renameId);
-}
+export const findStudentsByName = async (name) => (await repo.findStudentsByName(name)).map(renameId);
 
 export const countStudentsByNames = async (names) => {
     names = Array.isArray(names) ? names : [names];
     return await repo.countStudentsByNames(names);
 }
 
-export const findStudentsByMinScore = async (exam, minScore) => {
-    const students = await repo.findStudentsByMinScore(exam, +minScore);
-    return students.map(renameId);
-}
+export const findStudentsByMinScore = async (exam, minScore) => (await repo.findStudentsByMinScore(exam, +minScore)).map(renameId);
 
 function renameId(student){
-    // TODO HW2 return student with renamed id (_id -> id)
-    // Use this in function where need rename id
-    if (!student) {
-        return student;
+    if (student) {
+        student.id = student._id;
+        delete student._id;
     }
-
-    const result = {...student, id: student._id};
-    delete result._id;
-
-    return result;
+    return student;
 }

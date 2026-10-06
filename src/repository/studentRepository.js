@@ -23,9 +23,8 @@ export const updateStudent = async (id, data) => await collection.findOneAndUpda
 export const findStudentsByName = async name => await collection.find({name: {$regex: `^${name}$`, $options: 'i'}}, {projection: {password: 0}}).toArray();
 
 export const countStudentsByNames = async names => {
-    // TODO HW1 implements ignore case functionality
-    const regexNames = names.map(name => new RegExp(`^${name}$`, 'i'));
-    return await collection.countDocuments({name: {$in: regexNames}});
+    const regexConditions = names.map(name => ({name: {$regex: `^${name}$`, $options: 'i'}}));
+    return await collection.countDocuments({$or: regexConditions});
 }
 
 export const findStudentsByMinScore = async (exam, minScore) => await collection.find({[`scores.${exam}`]: {$gte: minScore}}, {projection: {password: 0}}).toArray();
